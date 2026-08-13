@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>Dossier médical</h1>
+    <p>Consultation du {{ dossier.date_consultation|date:"d F Y" }}</p>
+</div>
+
+<div class="card">
+    <div class="info-grid">
+        <div class="info-box">
+            <div class="label">Patient</div>
+            <div class="value">{{ dossier.patient.username }}</div>
+        </div>
+        <div class="info-box">
+            <div class="label">Soignant</div>
+            <div class="value">{{ dossier.soignant.username }}</div>
+        </div>
+        <div class="info-box">
+            <div class="label">Centre</div>
+            <div class="value">{{ dossier.health_center|default:"—" }}</div>
+        </div>
+        <div class="info-box full-width">
+            <div class="label">Symptômes</div>
+            <div class="value">{{ dossier.symptomes }}</div>
+        </div>
+        <div class="info-box full-width">
+            <div class="label">Diagnostic</div>
+            <div class="value">{{ dossier.diagnostic }}</div>
+        </div>
+        <div class="info-box full-width">
+            <div class="label">Traitement</div>
+            <div class="value">{{ dossier.traitement|default:"Aucun traitement prescrit" }}</div>
+        </div>
+    </div>
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url retour_url %}">← Retour</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+        <div>
+            <h1>{{ centre.name }}</h1>
+            <p>{{ centre.get_type_centre_display }} · {{ centre.ville }}</p>
+        </div>
+        {% if centre.est_ouvert %}
+            <span class="badge badge-open">Ouvert</span>
+        {% else %}
+            <span class="badge badge-closed">Fermé</span>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="info-grid">
+        <div class="info-box">
+            <div class="label">Type</div>
+            <div class="value">{{ centre.get_type_centre_display }}</div>
+        </div>
+        <div class="info-box">
+            <div class="label">Téléphone</div>
+            <div class="value">{{ centre.telephone|default:"—" }}</div>
+        </div>
+        <div class="info-box">
+            <div class="label">Horaires</div>
+            <div class="value">{{ centre.horaires|default:"—" }}</div>
+        </div>
+        <div class="info-box full-width">
+            <div class="label">Adresse</div>
+            <div class="value">{{ centre.adresse }}, {{ centre.ville }}</div>
+        </div>
+    </div>
+    <div class="actions">
+        <a class="btn btn-secondary" href="{% url 'liste_centres' %}">← Retour à la liste</a>
+    </div>
+</div>
+{% endblock %}

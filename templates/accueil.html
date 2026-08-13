@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+    {% if role_dashboard == 'patient' %}
+        <div class="dashboard-greeting">
+            <div style="display:flex;gap:1rem;align-items:center;">
+                <div class="greeting-avatar">{{ user.username|first|upper }}</div>
+                <div class="greeting-text">
+                    <h1>Bonjour, {{ user.username }}</h1>
+                    <p>Voici vos derniers dossiers médicaux</p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <p class="section-title">Dossiers récents</p>
+            <ul class="list-items">
+                {% for dossier in dossiers %}
+                    <li>
+                        <a href="{% url 'detail_dossier' dossier.pk %}">
+                            <div class="item-date">
+                                <span class="day">{{ dossier.date_consultation|date:"d" }}</span>
+                                {{ dossier.date_consultation|date:"M Y" }}
+                            </div>
+                            <div class="item-content">
+                                <p class="item-title">{{ dossier.diagnostic }}</p>
+                                <p class="item-sub">Consultation du {{ dossier.date_consultation|date:"d/m/Y" }}</p>
+                            </div>
+                            <span class="item-arrow">›</span>
+                        </a>
+                    </li>
+                {% empty %}
+                    <li class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <p>Aucun dossier pour l'instant.</p>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="actions">
+                <a class="btn btn-primary" href="{% url 'mes_dossiers' %}">Tous mes dossiers</a>
+                <a class="btn btn-secondary" href="{% url 'liste_centres' %}">Trouver un centre</a>
+            </div>
+        </div>
+
+    {% elif role_dashboard == 'soignant' %}
+        <div class="dashboard-greeting">
+            <div style="display:flex;gap:1rem;align-items:center;">
+                <div class="greeting-avatar">{{ user.username|first|upper }}</div>
+                <div class="greeting-text">
+                    <h1>Bonjour, Dr. {{ user.username }}</h1>
+                    <p>Vos dernières consultations</p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <p class="section-title">Patients récents</p>
+            <ul class="list-items">
+                {% for dossier in dossiers %}
+                    <li>
+                        <a href="{% url 'detail_dossier' dossier.pk %}">
+                            <div class="item-date">
+                                <span class="day">{{ dossier.date_consultation|date:"d" }}</span>
+                                {{ dossier.date_consultation|date:"M Y" }}
+                            </div>
+                            <div class="item-content">
+                                <p class="item-title">{{ dossier.patient.username }}</p>
+                                <p class="item-sub">{{ dossier.diagnostic }}</p>
+                            </div>
+                            <span class="item-arrow">›</span>
+                        </a>
+                    </li>
+                {% empty %}
+                    <li class="empty-state">
+                        <div class="empty-icon">🩺</div>
+                        <p>Aucune consultation enregistrée.</p>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="actions">
+                <a class="btn btn-primary" href="{% url 'creer_dossier' %}">Créer un dossier</a>
+            </div>
+        </div>
+
+    {% elif role_dashboard == 'centre' %}
+        <div class="dashboard-greeting">
+            <div style="display:flex;gap:1rem;align-items:center;">
+                <div class="greeting-avatar">{{ user.username|first|upper }}</div>
+                <div class="greeting-text">
+                    <h1>Bonjour, {{ user.username }}</h1>
+                    <p>Gestion de votre centre de santé</p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            {% if centre %}
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.5rem;">
+                    <h2 style="margin:0;">{{ centre.name }}</h2>
+                    {% if centre.est_ouvert %}
+                        <span class="badge badge-open">Ouvert</span>
+                    {% else %}
+                        <span class="badge badge-closed">Fermé</span>
+                    {% endif %}
+                </div>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="label">Type</div>
+                        <div class="value">{{ centre.get_type_centre_display }}</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="label">Ville</div>
+                        <div class="value">{{ centre.ville }}</div>
+                    </div>
+                    <div class="info-box full-width">
+                        <div class="label">Adresse</div>
+                        <div class="value">{{ centre.adresse }}, {{ centre.ville }}</div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <a class="btn btn-primary" href="{% url 'detail_centre' centre.pk %}">Voir la fiche</a>
+                    <a class="btn btn-secondary" href="{% url 'modifier_centre' centre.pk %}">Modifier</a>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🏥</div>
+                    <p>Vous n'avez pas encore enregistré votre centre de santé.</p>
+                </div>
+                <div class="actions" style="justify-content:center;">
+                    <a class="btn btn-primary" href="{% url 'creer_centre' %}">Créer mon centre</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% else %}
+    <section class="hero">
+        <h1>Votre santé, plus proche</h1>
+        <p>Trouvez un centre de santé disponible près de chez vous et gérez vos dossiers médicaux en toute simplicité.</p>
+        <div class="actions">
+            <a class="btn btn-white" href="{% url 'inscription' %}">Créer un compte</a>
+            <a class="btn btn-ghost" href="{% url 'login' %}">Se connecter</a>
+        </div>
+    </section>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🏥</div>
+            <h3>Trouver un centre</h3>
+            <p>Filtrez par ville, type et disponibilité pour trouver le centre adapté à vos besoins.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>Dossiers sécurisés</h3>
+            <p>Accédez à votre historique médical en toute confidentialité, accessible uniquement par vous et votre soignant.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🩺</div>
+            <h3>Suivi médical</h3>
+            <p>Les soignants peuvent créer et consulter les dossiers de leurs patients en quelques clics.</p>
+        </div>
+    </div>
+
+    <div class="actions" style="justify-content:center;margin-top:2rem;">
+        <a class="btn btn-primary" href="{% url 'liste_centres' %}">Explorer les centres</a>
+    </div>
+{% endif %}
+{% endblock %}

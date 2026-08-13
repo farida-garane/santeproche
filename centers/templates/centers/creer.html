@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>Créer un centre de santé</h1>
+    <p>Enregistrez votre établissement sur SantéProche</p>
+</div>
+<div class="card" style="max-width:560px;">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">Créer le centre</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

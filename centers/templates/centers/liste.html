@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>Centres de santé</h1>
+    <p>Trouvez un établissement disponible près de chez vous</p>
+</div>
+
+<div class="card">
+    <form class="filter-form" method="get">
+        <div class="form-group">
+            <label for="ville">Ville</label>
+            <input type="text" id="ville" name="ville" value="{{ filtres.ville }}" placeholder="Ex : Ouagadougou">
+        </div>
+        <div class="form-group">
+            <label for="type_centre">Type</label>
+            <select id="type_centre" name="type_centre">
+                <option value="">Tous les types</option>
+                {% for value, label in types_centre %}
+                    <option value="{{ value }}" {% if filtres.type_centre == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="est_ouvert">Disponibilité</label>
+            <select id="est_ouvert" name="est_ouvert">
+                <option value="">Tous</option>
+                <option value="oui" {% if filtres.est_ouvert == 'oui' %}selected{% endif %}>Ouvert</option>
+                <option value="non" {% if filtres.est_ouvert == 'non' %}selected{% endif %}>Fermé</option>
+            </select>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+            {% if filtres.ville or filtres.type_centre or filtres.est_ouvert %}
+                <a class="btn btn-secondary" href="{% url 'liste_centres' %}">Réinitialiser</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if centres %}
+        <p class="section-title" style="margin-top:1.5rem;">{{ centres|length }} centre{{ centres|length|pluralize }} trouvé{{ centres|length|pluralize }}</p>
+        <div class="centres-grid">
+            {% for centre in centres %}
+                <a class="centre-card" href="{% url 'detail_centre' centre.pk %}">
+                    <div class="centre-card-header">
+                        <h3>{{ centre.name }}</h3>
+                        {% if centre.est_ouvert %}
+                            <span class="badge badge-open">Ouvert</span>
+                        {% else %}
+                            <span class="badge badge-closed">Fermé</span>
+                        {% endif %}
+                    </div>
+                    <div class="centre-meta">
+                        <span><span class="badge badge-type">{{ centre.get_type_centre_display }}</span></span>
+                        <span>📍 {{ centre.ville }}</span>
+                        <span>🏠 {{ centre.adresse }}</span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <p>Aucun centre ne correspond à vos critères.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="card auth-card">
+        <h1>Inscription</h1>
+        <p class="auth-subtitle">Créez votre compte SantéProche</p>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;">Créer mon compte</button>
+        </form>
+        <p style="text-align:center;margin-top:1.5rem;font-size:0.9rem;color:var(--text-secondary);">
+            Déjà inscrit ? <a href="{% url 'login' %}">Se connecter</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

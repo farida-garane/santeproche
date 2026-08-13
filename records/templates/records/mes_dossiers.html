@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>Mes dossiers médicaux</h1>
+    <p>Historique de vos consultations</p>
+</div>
+
+<div class="card">
+    <ul class="list-items">
+    {% for dossier in dossiers %}
+        <li>
+            <a href="{% url 'detail_dossier' dossier.pk %}">
+                <div class="item-date">
+                    <span class="day">{{ dossier.date_consultation|date:"d" }}</span>
+                    {{ dossier.date_consultation|date:"M Y" }}
+                </div>
+                <div class="item-content">
+                    <p class="item-title">{{ dossier.diagnostic }}</p>
+                    <p class="item-sub">
+                        {% if dossier.soignant %}Dr. {{ dossier.soignant.username }} · {% endif %}
+                        {{ dossier.date_consultation|date:"d/m/Y" }}
+                    </p>
+                </div>
+                <span class="item-arrow">›</span>
+            </a>
+        </li>
+    {% empty %}
+        <li class="empty-state">
+            <div class="empty-icon">📋</div>
+            <p>Aucun dossier pour l'instant.</p>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}
